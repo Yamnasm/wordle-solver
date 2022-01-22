@@ -1,12 +1,16 @@
 import re
 
-def import_wordlist():
-    wordlist = []
-    with open("wordlist.txt", "r") as data:
-        lines = data.readlines()
-        for l in lines:
-            wordlist.append(l.rstrip())
-    return wordlist
+class Wordle_Solver:
+    def __init__(self):
+        self.alphabet = [chr(i) for i in range(ord('a'),ord('z')+1)]
+
+    def import_wordlist(self):
+        wordlist = []
+        with open("wordlist.txt", "r") as data:
+            lines = data.readlines()
+            for l in lines:
+                wordlist.append(l.rstrip())
+        return wordlist
 
 def listsearch(wordlist):
     r = re.compile("n.[^w]l.")
@@ -14,8 +18,13 @@ def listsearch(wordlist):
     return newlist
 
 def main():
-    wordlist = import_wordlist()
+    solver = Wordle_Solver()
+    print(solver.alphabet)
+
+    wordlist = solver.import_wordlist()
     print(listsearch(wordlist))
+
+    
 
 if __name__ == "__main__":
     main()
