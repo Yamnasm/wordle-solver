@@ -12,6 +12,10 @@ class Wordle_Solver:
                 wordlist.append(l.rstrip())
         return wordlist
 
+def regexbuilder(allowed_letters, soft_letters, hard_letters):
+    #fuck me I guess: why do I make things so hard for myself
+    pass
+
 def listsearch(wordlist):
     r = re.compile("n.[^w]l.")
     newlist = list(filter(r.match, wordlist))
@@ -23,8 +27,6 @@ def main():
 
     wordlist = solver.import_wordlist()
     print(listsearch(wordlist))
-
-    
 
 if __name__ == "__main__":
     main()
