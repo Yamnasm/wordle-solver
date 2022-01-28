@@ -1,9 +1,14 @@
 import random
+import pdb
+#pdb.set_trace()
 
 class wordle_game():
     def __init__(self):
         self.words = self.get_wordlist()
         self.goal_word = random.choice(self.words)
+
+        self.guess = ""
+        self.guesslist = self.get_guesslist()
 
         self.guesses = 6
         self.alphabet = [chr(i) for i in range(ord('a'),ord('z')+1)]
@@ -16,16 +21,27 @@ class wordle_game():
                 wordlist.append(l.rstrip())
         return wordlist
 
+    def get_guesslist(self):
+        guesslist = []
+        with open("validguesses.txt", "r") as data:
+            lines = data.readlines()
+            for l in lines:
+                guesslist.append(l.rstrip())
+        return guesslist
+
     def make_guess(self):
-        guess = self.is_guess_valid()
-        self.check_guess(guess)
+        self.is_guess_valid()
+        self.check_guess(self.guess)
 
     def is_guess_valid(self):
         guess = input("Make a guess: ").lower()
-        if len(guess) == 5:
+        if guess in self.words or guess in self.guesslist:
             self.remove_letters(guess)
-            return guess
-        self.is_guess_valid()
+            self.guess = guess
+            return
+        else:
+            print("Invalid Guess")
+            self.is_guess_valid()
     
     def check_guess(self, guess):
         if guess == self.goal_word:
