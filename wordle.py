@@ -29,26 +29,15 @@ class wordle_game():
                 guesslist.append(l.rstrip())
         return guesslist
 
-    def make_guess(self):
-        self.is_guess_valid()
-        self.check_guess(self.guess)
-
     def is_guess_valid(self):
-        guess = input("Make a guess: ").lower()
-        if guess in self.words or guess in self.guesslist:
-            self.remove_letters(guess)
-            self.guess = guess
-            return
+        if self.guess in self.words or self.guess in self.guesslist:
+            return True
         else:
-            print("Invalid Guess")
-            self.is_guess_valid()
+            return False
     
-    def check_guess(self, guess):
-        if guess == self.goal_word:
-            print("Correct word!")
-            return
+    def guess_result_dict(self):
         result_dict = {}
-        for i, letter in enumerate(guess):
+        for i, letter in enumerate(self.guess):
             result_dict[i + 1] = {"letter": letter}
             if letter == self.goal_word[i]:
                 result_dict[i + 1]["hard"] = True
@@ -58,37 +47,51 @@ class wordle_game():
                 result_dict[i + 1]["soft"] = True
             else:
                 result_dict[i + 1]["soft"] = False
-        self.print_guess_result(result_dict)
+        return result_dict
 
-    def print_guess_result(self, guess_dict):
-        print("".join([l["letter"] for l in guess_dict.values()]))
-        guess_string = ""
-        for letter in guess_dict.values():
-            if letter["hard"]:
-                guess_string += "^"
-            elif letter["soft"]:
-                guess_string += "~"
-            else:
-                guess_string += "?"
-        print(guess_string)
-
-    def remove_letters(self, guess):
-        for letter in guess:
+    def remove_letters(self):
+        for letter in self.guess:
             if letter in self.alphabet:
                 self.alphabet.remove(letter)
-        print("".join(self.alphabet))
 
-    def start_game(self):
-        print("?" * len(self.goal_word))
-        while self.guesses > 0:
-            self.make_guess()
-            self.guesses -= 1
-            print(f"guesses left: {self.guesses}")
-        print(f"Failed. The word was {self.goal_word}")
+    def next_turn(self, userguess):
+        self.guess = userguess
+        if self.is_guess_valid() == False:
+            return None
+
+        self.remove_letters()
+        self.guesses -= 1
+
+        return self.guess_result_dict()
+
+def print_guess_result(guess_dict):
+    guess_string = "".join([l["letter"] for l in guess_dict.values()])
+    guess_string += "\n"
+    for letter in guess_dict.values():
+        if letter["hard"]:
+            guess_string += "^"
+        elif letter["soft"]:
+            guess_string += "~"
+        else:
+            guess_string += "?"
+    return guess_string
 
 def main():
     game = wordle_game()
-    game.start_game()
+    while game.guesses > 0:
+        user_guess = input("Make Guess: ").lower()
+        result = game.next_turn(user_guess)
+        if result == None:
+            print("Invalid word.")
+            continue
+        print("".join(game.alphabet))
+        if user_guess == game.goal_word:
+            print("CORRECT WORD!")
+            break
+        print(print_guess_result(result))
+    if game.guesses == 0:
+        print("YOU LOSE")
+        print(game.goal_word)
 
 if __name__ == "__main__":
     main()
