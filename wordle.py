@@ -2,18 +2,18 @@ import random
 import pdb
 #pdb.set_trace()
 
-class wordle_game():
+class WordleGame():
     def __init__(self):
-        self.words = self.get_wordlist()
+        self.words = self.__get_wordlist()
         self.goal_word = random.choice(self.words)
 
         self.guess = ""
-        self.guesslist = self.get_guesslist()
+        self.guesslist = self.__get_guesslist()
 
         self.guesses = 6
         self.alphabet = [chr(i) for i in range(ord('a'),ord('z')+1)]
 
-    def get_wordlist(self):
+    def __get_wordlist(self):
         wordlist = []
         with open("wordlist.txt", "r") as data:
             lines = data.readlines()
@@ -21,7 +21,7 @@ class wordle_game():
                 wordlist.append(l.rstrip())
         return wordlist
 
-    def get_guesslist(self):
+    def __get_guesslist(self):
         guesslist = []
         with open("validguesses.txt", "r") as data:
             lines = data.readlines()
@@ -29,13 +29,18 @@ class wordle_game():
                 guesslist.append(l.rstrip())
         return guesslist
 
-    def is_guess_valid(self):
+    def __is_guess_valid(self):
         if self.guess in self.words or self.guess in self.guesslist:
             return True
         else:
             return False
+
+    def __remove_letters(self):
+        for letter in self.guess:
+            if letter in self.alphabet:
+                self.alphabet.remove(letter)
     
-    def guess_result_dict(self):
+    def __guess_result_dict(self):
         result_dict = {}
         for i, letter in enumerate(self.guess):
             result_dict[i + 1] = {"letter": letter}
@@ -49,20 +54,15 @@ class wordle_game():
                 result_dict[i + 1]["soft"] = False
         return result_dict
 
-    def remove_letters(self):
-        for letter in self.guess:
-            if letter in self.alphabet:
-                self.alphabet.remove(letter)
-
     def next_turn(self, userguess):
         self.guess = userguess
-        if self.is_guess_valid() == False:
+        if self.__is_guess_valid() == False:
             return None
 
-        self.remove_letters()
+        self.__remove_letters()
         self.guesses -= 1
 
-        return self.guess_result_dict()
+        return self.__guess_result_dict()
 
 def print_guess_result(guess_dict):
     guess_string = "".join([l["letter"] for l in guess_dict.values()])
@@ -77,7 +77,7 @@ def print_guess_result(guess_dict):
     return guess_string
 
 def main():
-    game = wordle_game()
+    game = WordleGame()
     while game.guesses > 0:
         user_guess = input("Make Guess: ").lower()
         result = game.next_turn(user_guess)
