@@ -20,14 +20,17 @@ class WordleGUI:
         master.columnconfigure(tuple(range(5)), weight=1)
         master.rowconfigure(tuple(range(6)), weight=1)
 
-    def font_resize(self, event=None):
+    def font_resize(self, event):
         for lbl in self.label:
             x = lbl.winfo_width()
             y = lbl.winfo_height()
             if x < y:
-                lbl.config(self.font.configure(size = x-10))
+                lbl.configure(font=("Arial", x-25))
             else:
-                lbl.config(self.font.configure(size = y-10))
+                lbl.configure(font=("Arial", y-25))
+
+    def trigger(self, event):
+        print("something happened")
 
 def main():
     root = Tk()
