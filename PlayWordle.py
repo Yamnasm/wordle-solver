@@ -8,22 +8,20 @@ class WordleGUI:
         self.master.title("Wordle")
         self.master.geometry("200x200")
         self.master.bind("<Key>", self.keypress)
-        self.font = tkFont.Font(family="Helvetica")
         self.label = []
         self.letter_num = 0
         self.word_size = 5
+        self.wordle_game = wordle.WordleGame()
+        self.current_word = ""
 
         i = 0
         for r in range(6):
             for c in range(5):
-                self.label.append(Label(master, text=i + 1))
+                self.label.append(Label(master))
                 self.label[i].grid(row=r, column=c, sticky = "NSEW")
                 i += 1
         master.columnconfigure(tuple(range(5)), weight=1)
         master.rowconfigure(tuple(range(6)), weight=1)
-
-    def trigger(self, event):
-        print("something happened")
     
     def valid_key(self, keycode):
         if keycode >= 65 and keycode <= 90:
@@ -38,17 +36,33 @@ class WordleGUI:
         if self.valid_key(event.keycode) == False:
             return
 
-        if event.keycode == 13:
-            kp = "ENTER"
-        elif event.keycode == 8:
-            kp = "BACKSPACE"
+        if event.keycode == 13: #ENTER
+            print(f"Submitted: {self.current_word}")
+            self.current_word = ""
+            return
+        elif event.keycode == 8: #BACKSPACE
+            if len(self.current_word) == 0:
+                return
+            self.current_word = self.current_word[:-1]
+            self.letter_num -= 1
+            self.label[self.letter_num]["text"] = ""
+            print(f"Current word: {self.current_word}.")
+            return
         else:
-            kp = event.char
+            key_pressed = event.char
 
-        self.label[self.letter_num]["text"] = kp
+        if len(self.current_word) == 5:
+            return
+        
+        self.current_word += key_pressed
+        self.label[self.letter_num]["text"] = key_pressed.upper()
         self.letter_num += 1
         
-        print(f"Pressed {kp}: {event.keycode}.")
+        #print(f"Pressed {kp}: {event.keycode}.")
+        print(f"Current word: {self.current_word}.")
+
+    def hit_enter():
+        pass
 
 def main():
     root = Tk()
