@@ -1,6 +1,4 @@
 import random
-import pdb
-#pdb.set_trace()
 
 class WordleGame():
     def __init__(self):
