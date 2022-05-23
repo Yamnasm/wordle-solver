@@ -1,9 +1,11 @@
-from tkinter import Tk, Canvas, messagebox
+from tkinter import Tk, Canvas, Frame, messagebox, Label
 import wordle
 
 GREY = "#787C7E"
 YELLOW = "#C9B458"
 GREEN = "#6AAA64"
+CANV_X = 480
+CANV_Y = 400
 
 class WordleGUI:
     def __init__(self):
@@ -11,20 +13,27 @@ class WordleGUI:
         #window init
         self.window = Tk()
         self.window.title("Wordle")
-        self.window.resizable(False, False)
+        #self.window.resizable(False, False)
+        self.window.attributes("-toolwindow", True)
         self.window.bind("<Key>", self.keypress)
-        self.win_size = 400
+
+        self.container = Frame(
+            self.window,
+            height=CANV_X,
+            width=CANV_Y
+        )
+        self.container.pack()
+
 
         # canvas init
         self.canvas = Canvas(
-            self.window,
-            width=self.win_size,
-            height=self.win_size
+            self.container,
+            height=CANV_X,
+            width=CANV_Y
         )
         self.canvas.pack()
         self.letter_bg_obj = []
         self.create_letter_background()
-        self.create_grid_lines()
         self.letter_text_obj = []
         
         # wordle objects / variables
@@ -32,17 +41,15 @@ class WordleGUI:
         self.current_word = ""
         self.letter_num = 0
 
+        # alphabet container
+        self.label = Label(self.window)
+        self.label.pack()
+
     def play(self):
         self.window.mainloop()
 
-    def create_grid_lines(self):
-        for i in range(4): # vertical
-            self.canvas.create_line((i + 1) * self.win_size / 5, 0, (i + 1) * self.win_size / 5, self.win_size)
-        for i in range(4): # horizontal
-            self.canvas.create_line(0, (i + 1) * self.win_size / 5, self.win_size, (i + 1) * self.win_size / 5)
-
     def create_letter_background(self):
-        for i in range(25):
+        for i in range(30):
             x0 = 0 + (80 * (i % 5))
             y0 = 0 + (80 * (i // 5))
             x1 = 80 + (80 * (i % 5))
@@ -90,7 +97,7 @@ class WordleGUI:
             self.canvas.delete(self.letter_text_obj[self.letter_num])
             del self.letter_text_obj[-1]
             return
-        elif self.letter_num >= 25: # max letters
+        elif self.letter_num >= 30: # max letters
             return
 
         else: #all other (legal) letters
