@@ -1,4 +1,7 @@
-from tkinter import Tk, Canvas, Frame, messagebox, Label
+from tkinter import *
+from tkinter import messagebox
+from turtle import bgcolor
+
 import wordle
 
 GREY = "#787C7E"
@@ -13,21 +16,22 @@ class WordleGUI:
         #window init
         self.window = Tk()
         self.window.title("Wordle")
-        #self.window.resizable(False, False)
-        self.window.attributes("-toolwindow", True)
+        self.window.resizable(False, False)
+        #self.window.attributes("-toolwindow", True)
+        self.window.configure(bg="white")
         self.window.bind("<Key>", self.keypress)
+        self.game_frame = Frame(self.window, background="white")
 
-        self.container = Frame(
-            self.window,
+        self.cell_container = Frame(
+            self.game_frame,
             height=CANV_X,
-            width=CANV_Y
+            width=CANV_Y,
+            background="white"
         )
-        self.container.pack()
-
 
         # canvas init
         self.canvas = Canvas(
-            self.container,
+            self.cell_container,
             height=CANV_X,
             width=CANV_Y
         )
@@ -41,9 +45,22 @@ class WordleGUI:
         self.current_word = ""
         self.letter_num = 0
 
-        # alphabet container
-        self.label = Label(self.window)
-        self.label.pack()
+        # alphabet cell_container
+        self.label = []
+        self.letter_frame = Frame(self.game_frame, background="white")
+        for x in range(26):
+            self.label.append(
+                Label(
+                    self.letter_frame,
+                    text=chr(65 + x),
+                    background="white"
+                    )
+                )
+            self.label[x].pack(side=LEFT)
+
+        self.cell_container.pack(side=TOP)
+        self.letter_frame.pack(side=BOTTOM)
+        self.game_frame.pack(side=LEFT)
 
     def play(self):
         self.window.mainloop()
@@ -56,7 +73,7 @@ class WordleGUI:
             y1 = 80 + (80 * (i // 5))
             self.letter_bg_obj.append(
                 self.canvas.create_rectangle(
-                    x0, y0, x1, y1, fill="white"
+                    x0, y0, x1, y1, fill="white" 
                 )
             )
 
@@ -121,14 +138,16 @@ class WordleGUI:
             font=('Helvetica 50 bold'))
 
     def display_results(self, results_dict):
-        cell = self.letter_num - 5        
+        cell = self.letter_num - 5
         for letter in results_dict.values():
-            if letter["hard"]:
-                self.canvas.itemconfig(self.letter_bg_obj[cell], fill=GREEN)
-            elif letter["soft"]:
+            self.canvas.itemconfig(self.letter_bg_obj[cell], fill=GREY)
+            self.label[ord(letter["letter"])- 97].configure(bg=GREY)
+            if letter["soft"]:
                 self.canvas.itemconfig(self.letter_bg_obj[cell], fill=YELLOW)
-            else:
-                self.canvas.itemconfig(self.letter_bg_obj[cell], fill=GREY)
+                self.label[ord(letter["letter"])- 97].configure(bg=YELLOW)
+            elif letter["hard"]:
+                self.canvas.itemconfig(self.letter_bg_obj[cell], fill=GREEN)
+                self.label[ord(letter["letter"])- 97].configure(bg=GREEN)                
             cell += 1
 
 def main():
