@@ -145,7 +145,7 @@ class WordleGUI:
             if letter["soft"]:
                 self.canvas.itemconfig(self.letter_bg_obj[cell], fill=YELLOW)
                 self.label[ord(letter["letter"])- 97].configure(bg=YELLOW)
-            elif letter["hard"]:
+            if letter["hard"]:
                 self.canvas.itemconfig(self.letter_bg_obj[cell], fill=GREEN)
                 self.label[ord(letter["letter"])- 97].configure(bg=GREEN)                
             cell += 1
